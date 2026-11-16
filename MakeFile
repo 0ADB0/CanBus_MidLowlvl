@@ -1,0 +1,23 @@
+CC = gcc
+CFLAGS = -std=c11 -Wall -Wextra -Wpendantic -O2
+LIB = can_frame.c  can_bitstream.c can_crc15.c can_stuffing.c can_wire.c can_bus_sim.c
+LIBOBJ = $(LIB:.c=.o)
+
+all: can_wire_demo
+
+can_wire_demo: main.o $(LIBOBJ)
+	$(CC) $(CFLAGS) -o  $@ main.o $(LIBOBJ)
+
+can_tests: test_can.o $(LIBOBJ)
+	$(CC) $(CFLAGS) -o $@ test_can.o $(LIBOBJ)
+
+test: can_tests
+	./can_tests
+
+%.o: %.c $(wildcard *.h)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean: 
+	rm -f *.o can_wire_demo can_tests
+
+.PHONY: all test clean
